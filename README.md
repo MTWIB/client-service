@@ -16,4 +16,7 @@ A simple app that allows you to perform basic CRUD operations on clients, stored
 5. Run the app. To manage DB you can use endpoints listed below
 # Available endpoints
 ### (assuming you're running the project on your local web server)
-- localhost:8080/client-service-1.0
+- localhost:8080/client-service-1.0/clients/register?fullName=YOURNAME&mainPhoneNumber=YOURPHONENUMBER
+- localhost:8080/client-service-1.0/clients/update?clientId=ID&fullName=NAME&passport=PASSPORT&dateOfBirth=DATEOFBIRTH&additionalPhoneNumber=PHONENUMBER
+- localhost:8080/client-service-1.0/clients/get/ID
+- localhost:8080/client-service-1.0/clients/delete/ID
