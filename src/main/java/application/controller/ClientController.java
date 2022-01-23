@@ -1,36 +1,37 @@
 package application.controller;
 
-import application.dao.impl.ClientDaoImpl;
-import application.dao.impl.PersonalInfoDaoImpl;
-import application.dao.impl.PhoneNumberDaoImpl;
 import application.model.dto.AddClientDto;
 import application.model.dto.GetAndUpdateClientRequestDto;
 import application.model.dto.GetAndUpdateClientResponseDto;
-import application.model.mapper.ResponseDtoMapper;
 import application.service.ClientService;
-import application.service.impl.ClientServiceImpl;
 import application.validation.Validator;
 import java.util.Optional;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.PATCH;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+@Singleton
 @Path("clients")
 public class ClientController {
-    private final Validator validator = new Validator();
-    private final ClientService clientService = new ClientServiceImpl(new ClientDaoImpl(),
-            new PersonalInfoDaoImpl(), new PhoneNumberDaoImpl(), new ResponseDtoMapper());
+    @Inject
+    private Validator validator;
+    @Inject
+    private ClientService clientService;
 
-    @GET
-    @Path("register")
+    @POST
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response add(@QueryParam("fullName") String fullName,
-             @QueryParam("mainPhoneNumber") String mainPhoneNumber) {
-        AddClientDto addClientDto = new AddClientDto(fullName, mainPhoneNumber);
+    public Response add(AddClientDto addClientDto) {
         if (!validator.validate(addClientDto)) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
@@ -39,19 +40,13 @@ public class ClientController {
         return Response.status(Response.Status.OK).entity(message).build();
     }
 
-    @GET
-    @Path("update")
+    @PATCH
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response update(@QueryParam("clientId") Long clientId,
-                           @QueryParam("fullName") String fullName,
-                           @QueryParam("passport") String passport,
-                           @QueryParam("dateOfBirth") String dateOfBirth,
-                           @QueryParam("additionalPhoneNumber") String additionalPhoneNumber) {
-        GetAndUpdateClientRequestDto getAndUpdateClientRequestDto
-                = new GetAndUpdateClientRequestDto(clientId,
-                fullName, passport, dateOfBirth, additionalPhoneNumber);
+    public Response update(GetAndUpdateClientRequestDto getAndUpdateClientRequestDto) {
         if (!validator.validate(getAndUpdateClientRequestDto)
-                || clientService.getById(clientId).isEmpty()) {
+                || clientService.getById(getAndUpdateClientRequestDto.getClientId()).isEmpty()) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
         Object response = clientService.update(getAndUpdateClientRequestDto);
@@ -59,7 +54,7 @@ public class ClientController {
     }
 
     @GET
-    @Path("get/{id}")
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@PathParam("id") long id) {
         Optional<GetAndUpdateClientResponseDto> getAndUpdateClientResponseDto
@@ -71,8 +66,8 @@ public class ClientController {
                 .entity(getAndUpdateClientResponseDto.get()).build();
     }
 
-    @GET
-    @Path("delete/{id}")
+    @DELETE
+    @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response delete(@PathParam("id") long id) {
         Long deletedClientId = clientService.delete(id);

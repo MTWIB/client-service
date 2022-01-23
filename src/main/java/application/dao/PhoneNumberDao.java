@@ -12,4 +12,6 @@ public interface PhoneNumberDao {
     boolean delete(long id);
 
     Optional<Long> getClientIdByMainPhone(String mainPhoneNumber);
+
+    boolean checkIfExists(String phoneNumber);
 }

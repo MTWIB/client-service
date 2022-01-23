@@ -1,10 +1,14 @@
 package application.validation;
 
+import application.dao.PhoneNumberDao;
 import application.model.dto.AddClientDto;
 import application.model.dto.GetAndUpdateClientRequestDto;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
+@Default
 public class Validator {
     private static final int YEAR_INDEX = 0;
     private static final int MONTH_INDEX = 1;
@@ -15,6 +19,8 @@ public class Validator {
     private static final int LAST_DAY = 31;
     private static final int STARTING_YEAR = 1900;
     private static final int CURRENT_YEAR = 2022;
+    @Inject
+    private PhoneNumberDao phoneNumberDao;
 
     public boolean validate(AddClientDto addClientDto) {
         return isFullName(addClientDto.getFullName())
@@ -43,7 +49,8 @@ public class Validator {
             }
         }
         return areDigits && split[0].length() == 3 && split[1].length() == 3
-                && split[2].length() == 2 && split[3].length() == 2;
+                && split[2].length() == 2 && split[3].length() == 2
+                && !phoneNumberDao.checkIfExists(phoneNumber);
     }
 
     private boolean isPassportId(String passport) {
