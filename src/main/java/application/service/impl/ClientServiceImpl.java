@@ -14,22 +14,21 @@ import application.service.ClientService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import javax.enterprise.inject.Default;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
+@Default
 public class ClientServiceImpl implements ClientService {
-    private final ClientDao clientDao;
-    private final PersonalInfoDao personalInfoDao;
-    private final PhoneNumberDao phoneNumberDao;
-    private final ResponseDtoMapper responseDtoMapper;
-
-    public ClientServiceImpl(ClientDao clientDao,
-                             PersonalInfoDao personalInfoDao,
-                             PhoneNumberDao phoneNumberDao,
-                             ResponseDtoMapper responseDtoMapper) {
-        this.clientDao = clientDao;
-        this.personalInfoDao = personalInfoDao;
-        this.phoneNumberDao = phoneNumberDao;
-        this.responseDtoMapper = responseDtoMapper;
-    }
+    @Inject
+    private ClientDao clientDao;
+    @Inject
+    private PersonalInfoDao personalInfoDao;
+    @Inject
+    private PhoneNumberDao phoneNumberDao;
+    @Inject
+    private ResponseDtoMapper responseDtoMapper;
 
     @Override
     public Long add(AddClientDto addClientDto) {

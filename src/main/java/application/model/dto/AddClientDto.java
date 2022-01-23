@@ -4,11 +4,6 @@ public class AddClientDto {
     private String fullName;
     private String mainPhoneNumber;
 
-    public AddClientDto(String fullName, String mainPhoneNumber) {
-        this.fullName = fullName;
-        this.mainPhoneNumber = mainPhoneNumber;
-    }
-
     public String getFullName() {
         return fullName;
     }

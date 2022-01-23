@@ -12,9 +12,12 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import javax.enterprise.inject.Default;
+import javax.inject.Singleton;
 
+@Singleton
+@Default
 public class ClientDaoImpl implements ClientDao {
-
     @Override
     public Long add(Client client) {
         String insertClientRequest = "INSERT INTO clients (created) VALUES (?);";
@@ -55,14 +58,16 @@ public class ClientDaoImpl implements ClientDao {
 
     @Override
     public boolean delete(long id) {
-        String deleteClientRequest = "UPDATE clients SET is_deleted = TRUE WHERE id = ?;";
+        String deleteClientRequest = "UPDATE clients SET is_deleted = TRUE,"
+                + " deleted = ? WHERE id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                  PreparedStatement deleteClientStatement
                         = connection.prepareStatement(deleteClientRequest)) {
-            deleteClientStatement.setLong(1, id);
+            deleteClientStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            deleteClientStatement.setLong(2, id);
             return deleteClientStatement.executeUpdate() > 0;
         } catch (SQLException throwable) {
-            throw new DataProcessingException("Couldn't delete a driver by id " + id, throwable);
+            throw new DataProcessingException("Couldn't delete a client by id " + id, throwable);
         }
     }
 

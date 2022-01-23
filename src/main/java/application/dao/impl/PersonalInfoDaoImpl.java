@@ -14,7 +14,11 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import javax.enterprise.inject.Default;
+import javax.inject.Singleton;
 
+@Singleton
+@Default
 public class PersonalInfoDaoImpl implements PersonalInfoDao {
     @Override
     public Long add(PersonalInfo personalInfo) {
@@ -81,11 +85,12 @@ public class PersonalInfoDaoImpl implements PersonalInfoDao {
     @Override
     public boolean delete(long id) {
         String deletePersonalInfoRequest = "UPDATE personal_info SET is_deleted "
-                + "= TRUE WHERE client_id = ?;";
+                + "= TRUE, deleted = ? WHERE client_id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deletePersonalInfoStatement
                         = connection.prepareStatement(deletePersonalInfoRequest)) {
-            deletePersonalInfoStatement.setLong(1, id);
+            deletePersonalInfoStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            deletePersonalInfoStatement.setLong(2, id);
             return deletePersonalInfoStatement.executeUpdate() > 0;
         } catch (SQLException throwable) {
             throw new DataProcessingException("Couldnt delete personal info for client №"

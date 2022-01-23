@@ -7,16 +7,6 @@ public class GetAndUpdateClientRequestDto {
     private String dateOfBirth;
     private String additionalPhoneNumber;
 
-    public GetAndUpdateClientRequestDto(Long clientId, String fullName,
-                                        String passport, String dateOfBirth,
-                                        String additionalPhoneNumber) {
-        this.clientId = clientId;
-        this.fullName = fullName;
-        this.passport = passport;
-        this.dateOfBirth = dateOfBirth;
-        this.additionalPhoneNumber = additionalPhoneNumber;
-    }
-
     public Long getClientId() {
         return clientId;
     }

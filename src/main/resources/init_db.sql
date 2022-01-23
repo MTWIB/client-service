@@ -71,5 +71,8 @@ CREATE TABLE public.phone_numbers
 ALTER TABLE IF EXISTS public.phone_numbers
     OWNER to postgres;
 
+ALTER TABLE IF EXISTS public.phone_numbers
+    ADD CONSTRAINT unique_phone_number UNIQUE (phone_number);
+
 INSERT INTO phone_number_types (type) VALUES ('Main');
 INSERT INTO phone_number_types (type) VALUES ('Additional');

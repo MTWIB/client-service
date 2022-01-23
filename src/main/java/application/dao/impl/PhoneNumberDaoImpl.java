@@ -10,10 +10,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.enterprise.inject.Default;
+import javax.inject.Singleton;
 
+@Singleton
+@Default
 public class PhoneNumberDaoImpl implements PhoneNumberDao {
     @Override
     public Long add(PhoneNumber phoneNumber) {
@@ -43,7 +48,7 @@ public class PhoneNumberDaoImpl implements PhoneNumberDao {
     @Override
     public List<String> getPhoneNumbersByClientId(Long clientId) {
         String getPhoneNumbersRequest = "SELECT phone_number FROM phone_numbers "
-                + "WHERE client_id = ? AND phone_number_type_id = 1;";
+                + "WHERE client_id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement getPhoneNumbersStatement
                         = connection.prepareStatement(getPhoneNumbersRequest)) {
@@ -60,11 +65,12 @@ public class PhoneNumberDaoImpl implements PhoneNumberDao {
     @Override
     public boolean delete(long id) {
         String deletePhoneNumbersRequest = "UPDATE phone_numbers SET is_deleted "
-                + "= TRUE WHERE client_id = ?;";
+                + "= TRUE, deleted = ? WHERE client_id = ?;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement deletePhoneNumbersStatement
                         = connection.prepareStatement(deletePhoneNumbersRequest)) {
-            deletePhoneNumbersStatement.setLong(1, id);
+            deletePhoneNumbersStatement.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            deletePhoneNumbersStatement.setLong(2, id);
             return deletePhoneNumbersStatement.executeUpdate() > 0;
         } catch (SQLException throwable) {
             throw new DataProcessingException("Couldnt delete phone numbers for client №"
@@ -75,7 +81,7 @@ public class PhoneNumberDaoImpl implements PhoneNumberDao {
     @Override
     public Optional<Long> getClientIdByMainPhone(String mainPhoneNumber) {
         String getClientIdByPhoneNumberRequest = "SELECT client_id FROM phone_numbers "
-                + "WHERE phone_number= ? AND phone_number_type_id = 1;";
+                + "WHERE phone_number = ? AND phone_number_type_id = 1;";
         try (Connection connection = ConnectionUtil.getConnection();
                 PreparedStatement getClientIdByPhoneNumberStatement
                         = connection.prepareStatement(getClientIdByPhoneNumberRequest)) {
@@ -87,8 +93,27 @@ public class PhoneNumberDaoImpl implements PhoneNumberDao {
             }
             return Optional.ofNullable(clientId);
         } catch (SQLException throwable) {
-            throw new DataProcessingException("Couldnt get client ID for phone number"
+            throw new DataProcessingException("Couldnt get client ID for phone number "
                     + mainPhoneNumber, throwable);
+        }
+    }
+
+    @Override
+    public boolean checkIfExists(String phoneNumber) {
+        String checkIfNumberExistsRequest = "SELECT client_id FROM phone_numbers "
+                + "WHERE phone_number = ?;";
+        try (Connection connection = ConnectionUtil.getConnection();
+                PreparedStatement checkIfNumberExistsStatement
+                        = connection.prepareStatement(checkIfNumberExistsRequest)) {
+            checkIfNumberExistsStatement.setString(1, phoneNumber);
+            ResultSet resultSet = checkIfNumberExistsStatement.executeQuery();
+            if (resultSet.next()) {
+                return true;
+            }
+            return false;
+        } catch (SQLException throwable) {
+            throw new DataProcessingException("Phone number already exists "
+                    + phoneNumber, throwable);
         }
     }
 
