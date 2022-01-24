@@ -42,7 +42,7 @@ public class GetAndUpdateClientResponseDto {
 
     @Override
     public String toString() {
-        return "GetAndUpdateClientResponseDto{"
+        return "{"
                 + "fullName='" + fullName + '\''
                 + ", passport='" + passport + '\''
                 + ", dateOfBirth='" + dateOfBirth + '\''

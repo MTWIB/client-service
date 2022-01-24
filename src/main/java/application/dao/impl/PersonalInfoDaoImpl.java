@@ -15,9 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.enterprise.inject.Default;
-import javax.inject.Singleton;
 
-@Singleton
 @Default
 public class PersonalInfoDaoImpl implements PersonalInfoDao {
     @Override
