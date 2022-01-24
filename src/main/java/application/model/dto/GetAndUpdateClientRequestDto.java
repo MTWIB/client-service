@@ -49,7 +49,7 @@ public class GetAndUpdateClientRequestDto {
 
     @Override
     public String toString() {
-        return "GetAndUpdateClientRequestDto{"
+        return "{"
                 + "clientId=" + clientId
                 + ", fullName='" + fullName + '\''
                 + ", passport='" + passport + '\''

@@ -16,9 +16,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
 @Default
 public class ClientServiceImpl implements ClientService {
     @Inject

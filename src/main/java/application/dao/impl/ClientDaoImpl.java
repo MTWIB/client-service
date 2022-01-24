@@ -13,9 +13,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import javax.enterprise.inject.Default;
-import javax.inject.Singleton;
 
-@Singleton
 @Default
 public class ClientDaoImpl implements ClientDao {
     @Override
